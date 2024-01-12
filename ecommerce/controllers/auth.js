@@ -1,10 +1,10 @@
-const { errorHandler } = require("../helper.js/helper.js");
+const { errorHandler } = require("../helper/index.js");
 const User = require("../models/user.js");
 const jwt = require("jsonwebtoken"); //to generate signed token
 const expressJwt = require("express-jwt"); //for authorization  check
 
 exports.signup = (req, res) => {
-  console.log(req.body);
+  console.log(req.body,"auth user");
   const user = new User(req.body);
   user
     .save()
@@ -12,14 +12,12 @@ exports.signup = (req, res) => {
       user.salt = undefined;
       user.hashed_password = undefined;
       res.json({
-        user,
+        message: 'User saved successfully'
       });
 
-      //
-      //
     })
     .catch((err) => {
-      if (err) return res.status(400).json({ err: errorHandler(err) });
+      if (err) return res.status(400).json({ error:"user" });
     });
 };
 
