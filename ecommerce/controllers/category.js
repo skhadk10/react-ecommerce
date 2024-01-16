@@ -1,18 +1,61 @@
 const { errorHandler } = require("../helper/index.js");
 const Category = require("../models/category.js");
 
+exports.categoryById = (req, res, next, id) => {
+  Category.findById(id)
+    .then((category) => {
+      req.category = category;
+      next();
+    })
+    .catch((err) => {
+      if (err) return res.status(400).json({ error: "Category doesnot exist" });
+    });
+};
+
 exports.create = (req, res) => {
- 
   const category = new Category(req.body);
   category
     .save()
     .then((category) => {
       res.json({
         category,
-      })
+      });
     })
     .catch((err) => {
       if (err) return res.status(400).json({ error: errorHandler(err) });
     });
   console.log(category);
 };
+
+exports.read = (req, res) => {
+  return res.json(req.category);
+};
+
+exports.update = (req, res) => {
+  const category = req.category;
+  category.name = req.body.name;
+  category
+    .save()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      if (err) return res.status(400).json({ error: errorHandler(err) });
+    });
+};
+
+exports.remove = (req, res) => {
+  const category = req.category;
+  category
+    .deleteOne()
+    .then(() => {
+      res.json({
+        message: "Category remove successfully",
+      });
+    })
+    .catch((err) => {
+      if (err) return res.status(400).json({ error: errorHandler(err) });
+    });
+};
+
+exports.list = (req, res) => {};

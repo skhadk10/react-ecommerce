@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 // const expressValidator = require("express-validator");
 
@@ -25,6 +26,7 @@ app.use(morgan("tiny"));
 app.use(express.urlencoded({extended:false}))
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 // app.use(expressValidator());
 
 const port = process.env.PORT || 8000;
