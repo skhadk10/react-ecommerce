@@ -17,7 +17,7 @@ exports.signup = (req, res) => {
 
     })
     .catch((err) => {
-      if (err) return res.status(400).json({ error:"user" });
+      if (err) return res.status(400).json({ error:errorHandler(err) });
     });
 };
 
