@@ -4,21 +4,26 @@ const jwt = require("jsonwebtoken"); //to generate signed token
 const expressJwt = require("express-jwt"); //for authorization  check
 
 exports.signup = (req, res) => {
-  console.log(req.body,"auth user");
+
   const user = new User(req.body);
   user
     .save()
     .then((user) => {
       user.salt = undefined;
       user.hashed_password = undefined;
+      
       res.json({
         message: 'User saved successfully'
       });
 
     })
     .catch((err) => {
-      if (err) return res.status(400).json({ error:errorHandler(err) });
-    });
+      if(user.email === req.body.email) {
+        res.json({
+          errMsg:"User already exists"
+        }) 
+      }
+    })
 };
 
 exports.signin = (req, res) => {
@@ -31,7 +36,7 @@ exports.signin = (req, res) => {
       if (!User.authenticate(password)) {
         return res
           .status(401)
-          .json({ error: "Email and password does not match" });
+          .json({ errorMsg: "Email and password does not match" });
       }
       // generate a signed token with user id and secret
       const token = jwt.sign({ _id: User._id }, process.env.JWT_SECRET);
@@ -46,7 +51,7 @@ exports.signin = (req, res) => {
       if (err || !User)
         return res
           .status(400)
-          .json({ err: "User with email does not exist. Please signup" });
+          .json({ errorMsg: "User with email does not exist. Please signup" });
     });
 };
 
