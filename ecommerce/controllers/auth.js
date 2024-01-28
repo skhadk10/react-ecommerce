@@ -4,26 +4,24 @@ const jwt = require("jsonwebtoken"); //to generate signed token
 const expressJwt = require("express-jwt"); //for authorization  check
 
 exports.signup = (req, res) => {
-
   const user = new User(req.body);
   user
     .save()
     .then((user) => {
       user.salt = undefined;
       user.hashed_password = undefined;
-      
-      res.json({
-        message: 'User saved successfully'
-      });
 
+      res.json({
+        message: "User saved successfully",
+      });
     })
     .catch((err) => {
-      if(user.email === req.body.email) {
+      if (user.email === req.body.email) {
         res.json({
-          errMsg:"User already exists"
-        }) 
+          errMsg: "User already exists",
+        });
       }
-    })
+    });
 };
 
 exports.signin = (req, res) => {
@@ -44,7 +42,7 @@ exports.signin = (req, res) => {
       res.cookie("t", token, { expire: new Date() + 9999 });
       // return response with user and token to frontend client
       const { _id, name, email, role } = User;
-      return res.json({ token, _id, name, email, role });
+      return res.json({ token, user: { _id, name, email, role } });
     })
     .catch((err) => {
       console.log(User);
@@ -55,8 +53,7 @@ exports.signin = (req, res) => {
     });
 };
 
-exports.signout=(req,res)=>{
-  res.clearCookie("t")
-  res.json({message:"Signout success"})
-}
-
+exports.signout = (req, res) => {
+  res.clearCookie("t");
+  res.json({ message: "Signout success" });
+};

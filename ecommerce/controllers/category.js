@@ -58,4 +58,14 @@ exports.remove = (req, res) => {
     });
 };
 
-exports.list = (req, res) => {};
+exports.list = (req, res) => {
+  Category.find().then((data) => {
+    res.json(data);
+  }).catch((err) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler(err),
+      });
+    }
+  })
+};
