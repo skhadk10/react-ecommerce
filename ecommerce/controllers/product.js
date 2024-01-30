@@ -4,6 +4,7 @@ const _ = require("lodash");
 // const formidable = require("formidable");
 const { errorHandler } = require("../helper/index.js");
 const multer = require("multer");
+const { query } = require("express");
 
 const storage = multer.diskStorage({
   destination: "uploads",
@@ -53,7 +54,7 @@ exports.create = async (req, res) => {
         (product.photo.data = req.file.filename),
           (product.photo.contentType = req.file.mimetype); //contentType:"image/png"
       }
-      console.log("product: " + product)
+      console.log("product: " + product);
       product
         .save()
         .then((result) => {
@@ -264,13 +265,45 @@ exports.listBySearch = (req, res) => {
     });
 };
 
-exports.photo = (req, res,next) => {
- 
+exports.photo = (req, res, next) => {
   if (req.product.photo.data) {
     res.set("Content-Type", req.product.photo.contentType);
     return res.send(req.product.photo.data);
   }
-  next()
+  next();
+};
+
+exports.listSearch = (req, res) => {
+  // create query object to hold search value and category value
+  const query = {};
+  // assign search value to query.name
+  if (req.query.search) {
+    query.name = { $regex: req.query.search, $options: "i" };
+    // assign category value to query.category
+    if (req.query.category && req.query.category != "All") {
+      query.category = req.query.category;
+    }
+    // find the product ased on query object with 2 properties
+    // search and category
+
+    // find the product based on the query object with 2 properties
+    // search and category
+    const product = Product.find(query)
+      .select("-photo")
+      .then((data) => {
+        // console.log(data,"query-data")
+        res.json({
+          data,
+        });
+      })
+      .catch((err) => {
+        if (err) {
+          return res.status(400).json({
+            error: "Products not found",
+          });
+        }
+      });
+  }
 };
 
 // exports.create = (req, res) => {
