@@ -292,9 +292,7 @@ exports.listSearch = (req, res) => {
       .select("-photo")
       .then((data) => {
         // console.log(data,"query-data")
-        res.json({
-          data,
-        });
+        res.json(data);
       })
       .catch((err) => {
         if (err) {
